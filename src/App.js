@@ -2,39 +2,71 @@ import React from 'react';
 import {
   ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
+  Flex,
+  extendTheme,
+  useMediaQuery,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+import Navbar from './components/Navbar';
+import Body from './components/Body';
+import Body2 from './components/page2/Body2';
+import { LayoutGroup } from 'framer-motion';
+import BottomBar from './components/BottomBar';
+import { BottomNavigationStyleConfig as BottomNavigation } from 'chakra-ui-bottom-navigation';
+import Sidebar from './components/Sidebar';
+import {  Routes, Route, useNavigate } from 'react-router-dom';
+import { MyContextProvider } from './context/Contexts';
+import AddBudget from './components/page2/AddBudget';
+import Home from './components/bigscreen/Home';
+
+const breakpoints = {
+  base: "300px", // 0px
+  sm: "350px", // ~480px. em is a relative unit and is dependant on the font-size.
+  xs: '375px',
+  xm: '400px',
+  md: "568px", // ~768px
+  lg: "100%", // ~992px
+  xl: "80em", // ~1280px
+  "2xl": "96em", // ~1536px
+};
+
+const theme = extendTheme({
+  breakpoints,
+  components: {
+    BottomNavigation,
+  },
+});
 
 function App() {
+  const [isLargerThan800] = useMediaQuery('(min-width: 500px)');
+  const [isLargerThan900] = useMediaQuery('(min-width: 800px)');
+  const navigate = useNavigate();
+
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
-      </Box>
+      <MyContextProvider>
+      {!isLargerThan900 ? 
+      <Box backgroundColor="rgba(0, 0, 0, 0.03);" w={{base: '100%', md: '100%', sm: '100%', lg: '100%'}}>
+        {/* {!isLargerThan800 ? <Navbar hideFrom="md" /> : ''} */}
+        <Flex>
+          {isLargerThan800 ? <Sidebar /> : ''}
+          
+        <Routes>
+          <Route path='/' element={<Body flex="1" />} />
+          <Route path='/add-new-buget' element={<Body2 />}/>
+          <Route exact path="/create-budget" element={<AddBudget />} />
+        </Routes>
+        </Flex>
+        
+
+        {window.location.pathname === '/' && (
+        <LayoutGroup>
+          <Box>{!isLargerThan800 && <BottomBar />}</Box>
+        </LayoutGroup>
+      )}
+      </Box> 
+      :  
+      <Home/> }
+      </MyContextProvider>
     </ChakraProvider>
   );
 }

@@ -1,0 +1,13 @@
+{
+  "budgetAmount": 50000,
+  "expenses": [
+    {
+      "amount": 15000,
+      "category": "savings"
+    },
+    {
+      "amount": 15000,
+      "category": "food"
+    }
+  ]
+}
